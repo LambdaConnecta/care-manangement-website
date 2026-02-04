@@ -1,0 +1,1658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CareSync Pro - CQC-Compliant Care Management</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.1/dist/umd/lucide.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@300;400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1a4d2e;
+            --primary-dark: #0f3820;
+            --primary-light: #2d6b45;
+            --accent: #f77f00;
+            --accent-light: #ffb347;
+            --bg-primary: #fafdf9;
+            --bg-secondary: #f0f6f3;
+            --bg-card: #ffffff;
+            --text-primary: #1a1a1a;
+            --text-secondary: #4a5568;
+            --text-muted: #718096;
+            --border: #e2e8f0;
+            --border-focus: #2d6b45;
+            --success: #38a169;
+            --warning: #ed8936;
+            --error: #e53e3e;
+            --info: #3182ce;
+            --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(26, 77, 46, 0.08), 0 2px 4px -1px rgba(26, 77, 46, 0.04);
+            --shadow-lg: 0 10px 15px -3px rgba(26, 77, 46, 0.12), 0 4px 6px -2px rgba(26, 77, 46, 0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        #root {
+            min-height: 100vh;
+        }
+
+        /* Login Page Styles */
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            background: linear-gradient(135deg, #1a4d2e 0%, #0f3820 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(247, 127, 0, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .login-container::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(45, 107, 69, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 15s ease-in-out infinite reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(30px, -30px) rotate(120deg); }
+            66% { transform: translate(-20px, 20px) rotate(240deg); }
+        }
+
+        .login-left {
+            flex: 1;
+            padding: 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .login-brand {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: slideDown 0.8s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .login-brand h1 {
+            font-family: 'Crimson Pro', serif;
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .login-brand p {
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 1.1rem;
+            font-weight: 300;
+        }
+
+        .login-features {
+            max-width: 500px;
+            animation: fadeIn 1s ease-out 0.3s both;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: start;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            color: white;
+            animation: slideRight 0.6s ease-out backwards;
+        }
+
+        .feature-item:nth-child(1) { animation-delay: 0.5s; }
+        .feature-item:nth-child(2) { animation-delay: 0.7s; }
+        .feature-item:nth-child(3) { animation-delay: 0.9s; }
+
+        @keyframes slideRight {
+            from { opacity: 0; transform: translateX(-30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            backdrop-filter: blur(10px);
+        }
+
+        .feature-content h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+            font-weight: 600;
+        }
+
+        .feature-content p {
+            font-size: 0.95rem;
+            opacity: 0.85;
+            line-height: 1.5;
+        }
+
+        .login-right {
+            flex: 1;
+            padding: 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-primary);
+            position: relative;
+            z-index: 1;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 450px;
+            background: white;
+            padding: 3rem;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            animation: scaleIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .login-card h2 {
+            font-family: 'Crimson Pro', serif;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        .login-card p {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-size: 1rem;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.2s ease;
+            background: var(--bg-secondary);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--border-focus);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(45, 107, 69, 0.1);
+        }
+
+        .form-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%234a5568' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            padding-right: 2.5rem;
+        }
+
+        .btn {
+            padding: 0.875rem 1.5rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: 'DM Sans', sans-serif;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(26, 77, 46, 0.25);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-secondary);
+            border-color: var(--primary);
+        }
+
+        .btn-icon {
+            padding: 0.625rem;
+            border-radius: 10px;
+        }
+
+        /* Dashboard Layout */
+        .dashboard-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: var(--primary);
+            color: white;
+            padding: 2rem 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+        }
+
+        .sidebar-brand {
+            padding: 0 1.5rem 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-brand h2 {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .sidebar-brand p {
+            font-size: 0.85rem;
+            opacity: 0.7;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: 0.25rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.875rem;
+            padding: 0.875rem 1.5rem;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: white;
+        }
+
+        .nav-link.active {
+            background: rgba(247, 127, 0, 0.15);
+            color: white;
+            border-left-color: var(--accent);
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            background: var(--bg-primary);
+        }
+
+        .topbar {
+            background: white;
+            padding: 1.25rem 2rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .topbar-left h1 {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.75rem;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .topbar-left p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 1rem;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .user-profile:hover {
+            background: var(--bg-primary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .user-info h4 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .user-info p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .content-area {
+            padding: 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.75rem;
+            border-radius: 16px;
+            box-shadow: var(--shadow-md);
+            border-left: 4px solid var(--primary);
+            transition: all 0.3s ease;
+            animation: slideUp 0.5s ease-out backwards;
+        }
+
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; }
+        .stat-card:nth-child(4) { animation-delay: 0.4s; }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stat-icon.primary { background: rgba(26, 77, 46, 0.1); color: var(--primary); }
+        .stat-icon.accent { background: rgba(247, 127, 0, 0.1); color: var(--accent); }
+        .stat-icon.success { background: rgba(56, 161, 105, 0.1); color: var(--success); }
+        .stat-icon.warning { background: rgba(237, 137, 54, 0.1); color: var(--warning); }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            font-family: 'Crimson Pro', serif;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-change {
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .stat-change.positive { color: var(--success); }
+        .stat-change.negative { color: var(--error); }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.75rem;
+            box-shadow: var(--shadow-md);
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card-title {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .table thead {
+            background: var(--bg-secondary);
+        }
+
+        .table th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .table th:first-child {
+            border-top-left-radius: 12px;
+        }
+
+        .table th:last-child {
+            border-top-right-radius: 12px;
+        }
+
+        .table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+
+        .table tbody tr {
+            transition: all 0.2s ease;
+        }
+
+        .table tbody tr:hover {
+            background: var(--bg-secondary);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.375rem 0.75rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .badge.success { background: rgba(56, 161, 105, 0.1); color: var(--success); }
+        .badge.warning { background: rgba(237, 137, 54, 0.1); color: var(--warning); }
+        .badge.error { background: rgba(229, 62, 62, 0.1); color: var(--error); }
+        .badge.info { background: rgba(49, 130, 206, 0.1); color: var(--info); }
+        .badge.primary { background: rgba(26, 77, 46, 0.1); color: var(--primary); }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+            animation: fadeIn 0.2s ease;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+            animation: modalSlideUp 0.3s ease;
+        }
+
+        @keyframes modalSlideUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.75rem;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .btn-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            color: var(--text-muted);
+            transition: all 0.2s ease;
+        }
+
+        .btn-close:hover {
+            color: var(--text-primary);
+            background: var(--bg-secondary);
+            border-radius: 8px;
+        }
+
+        .alert {
+            padding: 1rem 1.25rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: start;
+            gap: 0.75rem;
+        }
+
+        .alert.success {
+            background: rgba(56, 161, 105, 0.1);
+            border-left: 4px solid var(--success);
+            color: var(--success);
+        }
+
+        .alert.error {
+            background: rgba(229, 62, 62, 0.1);
+            border-left: 4px solid var(--error);
+            color: var(--error);
+        }
+
+        .alert.warning {
+            background: rgba(237, 137, 54, 0.1);
+            border-left: 4px solid var(--warning);
+            color: var(--warning);
+        }
+
+        .alert.info {
+            background: rgba(49, 130, 206, 0.1);
+            border-left: 4px solid var(--info);
+            color: var(--info);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .btn-group .btn {
+            flex: 1;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1.5rem;
+            color: var(--text-muted);
+        }
+
+        .empty-state svg {
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .login-container {
+                flex-direction: column;
+            }
+
+            .login-left {
+                display: none;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, createContext, useContext } = React;
+        const { 
+            User, Users, Calendar, FileText, Shield, Clock, 
+            AlertCircle, CheckCircle, Plus, Edit, Trash2, 
+            LogOut, Menu, X, Download, Upload, Eye, Search,
+            TrendingUp, TrendingDown, Activity, Bell
+        } = lucide;
+
+        // Mock Database
+        class MockDB {
+            constructor() {
+                this.users = [
+                    { id: '1', email: 'admin@caresync.com', password: 'admin123', role: 'admin', firstName: 'Sarah', lastName: 'Johnson', isActive: true },
+                    { id: '2', email: 'manager@caresync.com', password: 'manager123', role: 'manager', firstName: 'James', lastName: 'Wilson', isActive: true },
+                    { id: '3', email: 'staff@caresync.com', password: 'staff123', role: 'staff', firstName: 'Emma', lastName: 'Davis', isActive: true },
+                ];
+                
+                this.staffProfiles = [
+                    { id: '1', userId: '3', employeeId: 'EMP001', dbsNumber: 'DBS12345', dbsIssueDate: '2023-01-15', dbsExpiryDate: '2026-01-15', phoneMobile: '07700 900001' },
+                ];
+
+                this.serviceUsers = [
+                    { id: '1', clientReference: 'SU001', firstName: 'Margaret', lastName: 'Thompson', dateOfBirth: '1945-03-12', address: '123 High Street', postcode: 'SW1A 1AA', phone: '020 7946 0001', carePlanSummary: 'Needs assistance with daily living activities', riskNotes: 'Mobility issues - use walking frame', isActive: true },
+                    { id: '2', clientReference: 'SU002', firstName: 'Robert', lastName: 'Anderson', dateOfBirth: '1952-07-23', address: '45 Park Lane', postcode: 'W1K 1LB', phone: '020 7946 0002', carePlanSummary: 'Dementia care support', riskNotes: 'May become confused - reassurance needed', isActive: true },
+                ];
+
+                this.shifts = [
+                    { id: '1', serviceUserId: '1', assignedStaffId: '3', shiftDate: '2026-02-03', shiftStartTime: '09:00', shiftEndTime: '11:00', status: 'scheduled', notes: '' },
+                    { id: '2', serviceUserId: '2', assignedStaffId: '3', shiftDate: '2026-02-03', shiftStartTime: '14:00', shiftEndTime: '16:00', status: 'scheduled', notes: '' },
+                    { id: '3', serviceUserId: '1', assignedStaffId: '3', shiftDate: '2026-02-04', shiftStartTime: '09:00', shiftEndTime: '11:00', status: 'scheduled', notes: '' },
+                ];
+
+                this.visitLogs = [
+                    { id: '1', shiftId: '1', staffId: '3', serviceUserId: '1', actualStartTime: '2026-02-02T09:05:00', actualEndTime: '2026-02-02T11:00:00', careNotes: 'Assisted with personal care and breakfast. Margaret in good spirits today.', syncStatus: 'synced' },
+                ];
+
+                this.auditLog = [];
+            }
+
+            authenticate(email, password) {
+                const user = this.users.find(u => u.email === email && u.password === password);
+                if (user) {
+                    const { password: _, ...userWithoutPassword } = user;
+                    return userWithoutPassword;
+                }
+                return null;
+            }
+
+            getStaffProfile(userId) {
+                return this.staffProfiles.find(sp => sp.userId === userId);
+            }
+
+            getServiceUser(id) {
+                return this.serviceUsers.find(su => su.id === id);
+            }
+
+            getStaff(id) {
+                return this.users.find(u => u.id === id);
+            }
+
+            addAuditLog(userId, action, entityType, entityId) {
+                this.auditLog.push({
+                    id: String(this.auditLog.length + 1),
+                    userId,
+                    action,
+                    entityType,
+                    entityId,
+                    timestamp: new Date().toISOString()
+                });
+            }
+        }
+
+        const db = new MockDB();
+
+        // Auth Context
+        const AuthContext = createContext(null);
+
+        function AuthProvider({ children }) {
+            const [user, setUser] = useState(null);
+            const [loading, setLoading] = useState(true);
+
+            useEffect(() => {
+                const storedUser = localStorage.getItem('currentUser');
+                if (storedUser) {
+                    setUser(JSON.parse(storedUser));
+                }
+                setLoading(false);
+            }, []);
+
+            const login = (email, password) => {
+                const authenticatedUser = db.authenticate(email, password);
+                if (authenticatedUser) {
+                    setUser(authenticatedUser);
+                    localStorage.setItem('currentUser', JSON.stringify(authenticatedUser));
+                    db.addAuditLog(authenticatedUser.id, 'LOGIN', 'users', authenticatedUser.id);
+                    return true;
+                }
+                return false;
+            };
+
+            const logout = () => {
+                if (user) {
+                    db.addAuditLog(user.id, 'LOGOUT', 'users', user.id);
+                }
+                setUser(null);
+                localStorage.removeItem('currentUser');
+            };
+
+            return (
+                <AuthContext.Provider value={{ user, login, logout, loading }}>
+                    {children}
+                </AuthContext.Provider>
+            );
+        }
+
+        function useAuth() {
+            const context = useContext(AuthContext);
+            if (!context) throw new Error('useAuth must be used within AuthProvider');
+            return context;
+        }
+
+        // Login Component
+        function LoginPage() {
+            const [email, setEmail] = useState('');
+            const [password, setPassword] = useState('');
+            const [role, setRole] = useState('admin');
+            const [error, setError] = useState('');
+            const { login } = useAuth();
+
+            const handleSubmit = (e) => {
+                e.preventDefault();
+                setError('');
+                
+                if (login(email, password)) {
+                    // Success - context will handle navigation
+                } else {
+                    setError('Invalid email or password. Please try again.');
+                }
+            };
+
+            const fillDemoCredentials = (demoRole) => {
+                setRole(demoRole);
+                switch(demoRole) {
+                    case 'admin':
+                        setEmail('admin@caresync.com');
+                        setPassword('admin123');
+                        break;
+                    case 'manager':
+                        setEmail('manager@caresync.com');
+                        setPassword('manager123');
+                        break;
+                    case 'staff':
+                        setEmail('staff@caresync.com');
+                        setPassword('staff123');
+                        break;
+                }
+            };
+
+            return (
+                <div className="login-container">
+                    <div className="login-left">
+                        <div className="login-brand">
+                            <h1>CareSync Pro</h1>
+                            <p>CQC-Compliant Care Management</p>
+                        </div>
+                        <div className="login-features">
+                            <div className="feature-item">
+                                <div className="feature-icon">
+                                    <Shield size={24} />
+                                </div>
+                                <div className="feature-content">
+                                    <h3>CQC Compliance Built-In</h3>
+                                    <p>Automated audit trails, DBS tracking, and inspection-ready reports ensure you're always prepared.</p>
+                                </div>
+                            </div>
+                            <div className="feature-item">
+                                <div className="feature-icon">
+                                    <Calendar size={24} />
+                                </div>
+                                <div className="feature-content">
+                                    <h3>Smart Rota Management</h3>
+                                    <p>Prevent double-bookings, manage shifts efficiently, and keep your team informed on any device.</p>
+                                </div>
+                            </div>
+                            <div className="feature-item">
+                                <div className="feature-icon">
+                                    <FileText size={24} />
+                                </div>
+                                <div className="feature-content">
+                                    <h3>Mobile Care Logging</h3>
+                                    <p>Staff can record visits, write care notes, and work offline - all synced automatically.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="login-right">
+                        <div className="login-card">
+                            <h2>Welcome Back</h2>
+                            <p>Sign in to access your care management dashboard</p>
+                            
+                            {error && (
+                                <div className="alert error">
+                                    <AlertCircle size={20} />
+                                    <span>{error}</span>
+                                </div>
+                            )}
+
+                            <form onSubmit={handleSubmit}>
+                                <div className="form-group">
+                                    <label className="form-label">Demo Login As</label>
+                                    <select 
+                                        className="form-input form-select"
+                                        value={role}
+                                        onChange={(e) => fillDemoCredentials(e.target.value)}
+                                    >
+                                        <option value="admin">Admin</option>
+                                        <option value="manager">Manager</option>
+                                        <option value="staff">Staff Member</option>
+                                    </select>
+                                </div>
+
+                                <div className="form-group">
+                                    <label className="form-label">Email Address</label>
+                                    <input
+                                        type="email"
+                                        className="form-input"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        placeholder="your.email@example.com"
+                                        required
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <label className="form-label">Password</label>
+                                    <input
+                                        type="password"
+                                        className="form-input"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        placeholder="Enter your password"
+                                        required
+                                    />
+                                </div>
+
+                                <button type="submit" className="btn btn-primary">
+                                    Sign In
+                                    <User size={18} />
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // Dashboard Component
+        function Dashboard() {
+            const { user } = useAuth();
+
+            const stats = {
+                admin: [
+                    { label: 'Total Staff', value: '12', change: '+2 this month', positive: true, icon: Users, color: 'primary' },
+                    { label: 'Active Service Users', value: '48', change: '+5 this week', positive: true, icon: User, color: 'accent' },
+                    { label: 'Scheduled Shifts', value: '156', change: 'This week', positive: true, icon: Calendar, color: 'success' },
+                    { label: 'Compliance Rate', value: '98%', change: '+2% improvement', positive: true, icon: Shield, color: 'info' },
+                ],
+                manager: [
+                    { label: 'Team Members', value: '8', change: 'All active', positive: true, icon: Users, color: 'primary' },
+                    { label: 'Today\'s Visits', value: '24', change: '6 completed', positive: true, icon: Activity, color: 'success' },
+                    { label: 'Pending Reports', value: '3', change: 'Needs review', positive: false, icon: FileText, color: 'warning' },
+                    { label: 'DBS Renewals', value: '2', change: 'Due this month', positive: false, icon: AlertCircle, color: 'warning' },
+                ],
+                staff: [
+                    { label: 'Today\'s Shifts', value: '3', change: '1 completed', positive: true, icon: Calendar, color: 'primary' },
+                    { label: 'This Week', value: '12', change: 'Total visits', positive: true, icon: Activity, color: 'accent' },
+                    { label: 'Service Users', value: '6', change: 'Assigned to you', positive: true, icon: Users, color: 'success' },
+                    { label: 'Care Notes', value: '45', change: 'This month', positive: true, icon: FileText, color: 'info' },
+                ],
+            };
+
+            const currentStats = stats[user.role] || stats.admin;
+
+            return (
+                <div className="content-area">
+                    <div className="stats-grid">
+                        {currentStats.map((stat, index) => (
+                            <div key={index} className="stat-card">
+                                <div className="stat-header">
+                                    <div>
+                                        <div className="stat-label">{stat.label}</div>
+                                        <div className="stat-value">{stat.value}</div>
+                                    </div>
+                                    <div className={`stat-icon ${stat.color}`}>
+                                        <stat.icon size={24} />
+                                    </div>
+                                </div>
+                                <div className={`stat-change ${stat.positive ? 'positive' : 'negative'}`}>
+                                    {stat.positive ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
+                                    {stat.change}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    <div className="card">
+                        <div className="card-header">
+                            <h3 className="card-title">Recent Activity</h3>
+                            <button className="btn btn-secondary">
+                                <Download size={18} />
+                                Export Report
+                            </button>
+                        </div>
+                        <div className="table-container">
+                            <table className="table">
+                                <thead>
+                                    <tr>
+                                        <th>Service User</th>
+                                        <th>Staff Member</th>
+                                        <th>Date & Time</th>
+                                        <th>Duration</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {db.visitLogs.map(log => {
+                                        const serviceUser = db.getServiceUser(log.serviceUserId);
+                                        const staff = db.getStaff(log.staffId);
+                                        const start = new Date(log.actualStartTime);
+                                        const end = new Date(log.actualEndTime);
+                                        const duration = Math.round((end - start) / (1000 * 60));
+                                        
+                                        return (
+                                            <tr key={log.id}>
+                                                <td>{serviceUser?.firstName} {serviceUser?.lastName}</td>
+                                                <td>{staff?.firstName} {staff?.lastName}</td>
+                                                <td>{start.toLocaleDateString()} {start.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</td>
+                                                <td>{duration} mins</td>
+                                                <td><span className="badge success">Completed</span></td>
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // Staff Management Component
+        function StaffManagement() {
+            const [showModal, setShowModal] = useState(false);
+            const { user } = useAuth();
+
+            if (user.role === 'staff') {
+                return (
+                    <div className="content-area">
+                        <div className="alert warning">
+                            <AlertCircle size={20} />
+                            <span>You don't have permission to access this page.</span>
+                        </div>
+                    </div>
+                );
+            }
+
+            return (
+                <div className="content-area">
+                    <div className="card">
+                        <div className="card-header">
+                            <h3 className="card-title">Staff Directory</h3>
+                            <button className="btn btn-primary" onClick={() => setShowModal(true)}>
+                                <Plus size={18} />
+                                Add Staff Member
+                            </button>
+                        </div>
+                        <div className="table-container">
+                            <table className="table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Employee ID</th>
+                                        <th>Email</th>
+                                        <th>DBS Expiry</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {db.users.filter(u => u.role === 'staff').map(staff => {
+                                        const profile = db.getStaffProfile(staff.id);
+                                        const dbsExpiry = profile ? new Date(profile.dbsExpiryDate) : null;
+                                        const daysUntilExpiry = dbsExpiry ? Math.floor((dbsExpiry - new Date()) / (1000 * 60 * 60 * 24)) : null;
+                                        
+                                        return (
+                                            <tr key={staff.id}>
+                                                <td>{staff.firstName} {staff.lastName}</td>
+                                                <td>{profile?.employeeId || 'N/A'}</td>
+                                                <td>{staff.email}</td>
+                                                <td>
+                                                    {profile?.dbsExpiryDate || 'N/A'}
+                                                    {daysUntilExpiry && daysUntilExpiry < 90 && (
+                                                        <span className="badge warning" style={{marginLeft: '0.5rem'}}>
+                                                            {daysUntilExpiry} days
+                                                        </span>
+                                                    )}
+                                                </td>
+                                                <td>
+                                                    <span className={`badge ${staff.isActive ? 'success' : 'error'}`}>
+                                                        {staff.isActive ? 'Active' : 'Inactive'}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <button className="btn btn-icon btn-secondary">
+                                                        <Edit size={16} />
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    {showModal && (
+                        <div className="modal-overlay" onClick={() => setShowModal(false)}>
+                            <div className="modal" onClick={(e) => e.stopPropagation()}>
+                                <div className="modal-header">
+                                    <h3 className="modal-title">Add Staff Member</h3>
+                                    <button className="btn-close" onClick={() => setShowModal(false)}>
+                                        <X size={24} />
+                                    </button>
+                                </div>
+                                <div className="form-grid">
+                                    <div className="form-group">
+                                        <label className="form-label">First Name</label>
+                                        <input type="text" className="form-input" placeholder="Enter first name" />
+                                    </div>
+                                    <div className="form-group">
+                                        <label className="form-label">Last Name</label>
+                                        <input type="text" className="form-input" placeholder="Enter last name" />
+                                    </div>
+                                    <div className="form-group">
+                                        <label className="form-label">Email</label>
+                                        <input type="email" className="form-input" placeholder="email@example.com" />
+                                    </div>
+                                    <div className="form-group">
+                                        <label className="form-label">Employee ID</label>
+                                        <input type="text" className="form-input" placeholder="EMP001" />
+                                    </div>
+                                    <div className="form-group">
+                                        <label className="form-label">DBS Number</label>
+                                        <input type="text" className="form-input" placeholder="DBS number" />
+                                    </div>
+                                    <div className="form-group">
+                                        <label className="form-label">DBS Expiry Date</label>
+                                        <input type="date" className="form-input" />
+                                    </div>
+                                </div>
+                                <div className="btn-group">
+                                    <button className="btn btn-secondary" onClick={() => setShowModal(false)}>Cancel</button>
+                                    <button className="btn btn-primary">Add Staff Member</button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        // Service Users Component
+        function ServiceUsers() {
+            const [showModal, setShowModal] = useState(false);
+            const { user } = useAuth();
+
+            const accessibleUsers = user.role === 'staff' 
+                ? db.serviceUsers.filter(su => db.shifts.some(s => s.assignedStaffId === user.id && s.serviceUserId === su.id))
+                : db.serviceUsers;
+
+            return (
+                <div className="content-area">
+                    <div className="card">
+                        <div className="card-header">
+                            <h3 className="card-title">Service Users</h3>
+                            {user.role !== 'staff' && (
+                                <button className="btn btn-primary" onClick={() => setShowModal(true)}>
+                                    <Plus size={18} />
+                                    Add Service User
+                                </button>
+                            )}
+                        </div>
+                        <div className="table-container">
+                            <table className="table">
+                                <thead>
+                                    <tr>
+                                        <th>Reference</th>
+                                        <th>Name</th>
+                                        <th>Date of Birth</th>
+                                        <th>Postcode</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {accessibleUsers.map(su => (
+                                        <tr key={su.id}>
+                                            <td>{su.clientReference}</td>
+                                            <td>{su.firstName} {su.lastName}</td>
+                                            <td>{new Date(su.dateOfBirth).toLocaleDateString()}</td>
+                                            <td>{su.postcode}</td>
+                                            <td>
+                                                <span className={`badge ${su.isActive ? 'success' : 'error'}`}>
+                                                    {su.isActive ? 'Active' : 'Inactive'}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <button className="btn btn-icon btn-secondary">
+                                                    <Eye size={16} />
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    {showModal && (
+                        <div className="modal-overlay" onClick={() => setShowModal(false)}>
+                            <div className="modal" onClick={(e) => e.stopPropagation()}>
+                                <div className="modal-header">
+                                    <h3 className="modal-title">Add Service User</h3>
+                                    <button className="btn-close" onClick={() => setShowModal(false)}>
+                                        <X size={24} />
+                                    </button>
+                                </div>
+                                <div className="form-grid">
+                                    <div className="form-group">
+                                        <label className="form-label">Client Reference</label>
+                                        <input type="text" className="form-input" placeholder="SU001" />
+                                    </div>
+                                    <div className="form-group">
+                                        <label className="form-label">First Name</label>
+                                        <input type="text" className="form-input" placeholder="First name" />
+                                    </div>
+                                    <div className="form-group">
+                                        <label className="form-label">Last Name</label>
+                                        <input type="text" className="form-input" placeholder="Last name" />
+                                    </div>
+                                    <div className="form-group">
+                                        <label className="form-label">Date of Birth</label>
+                                        <input type="date" className="form-input" />
+                                    </div>
+                                    <div className="form-group">
+                                        <label className="form-label">Address</label>
+                                        <input type="text" className="form-input" placeholder="Street address" />
+                                    </div>
+                                    <div className="form-group">
+                                        <label className="form-label">Postcode</label>
+                                        <input type="text" className="form-input" placeholder="SW1A 1AA" />
+                                    </div>
+                                </div>
+                                <div className="form-group">
+                                    <label className="form-label">Care Plan Summary</label>
+                                    <textarea className="form-input" rows="3" placeholder="Brief overview of care needs"></textarea>
+                                </div>
+                                <div className="form-group">
+                                    <label className="form-label">Risk Notes</label>
+                                    <textarea className="form-input" rows="2" placeholder="Key alerts and risk information"></textarea>
+                                </div>
+                                <div className="btn-group">
+                                    <button className="btn btn-secondary" onClick={() => setShowModal(false)}>Cancel</button>
+                                    <button className="btn btn-primary">Add Service User</button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        // Rota Management Component
+        function RotaManagement() {
+            const { user } = useAuth();
+            const [showModal, setShowModal] = useState(false);
+
+            const accessibleShifts = user.role === 'staff'
+                ? db.shifts.filter(s => s.assignedStaffId === user.id)
+                : db.shifts;
+
+            return (
+                <div className="content-area">
+                    <div className="card">
+                        <div className="card-header">
+                            <h3 className="card-title">Rota Schedule</h3>
+                            {user.role !== 'staff' && (
+                                <button className="btn btn-primary" onClick={() => setShowModal(true)}>
+                                    <Plus size={18} />
+                                    Create Shift
+                                </button>
+                            )}
+                        </div>
+                        <div className="table-container">
+                            <table className="table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Time</th>
+                                        <th>Service User</th>
+                                        <th>Staff Member</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {accessibleShifts.map(shift => {
+                                        const serviceUser = db.getServiceUser(shift.serviceUserId);
+                                        const staff = db.getStaff(shift.assignedStaffId);
+                                        
+                                        return (
+                                            <tr key={shift.id}>
+                                                <td>{new Date(shift.shiftDate).toLocaleDateString()}</td>
+                                                <td>{shift.shiftStartTime} - {shift.shiftEndTime}</td>
+                                                <td>{serviceUser?.firstName} {serviceUser?.lastName}</td>
+                                                <td>{staff?.firstName} {staff?.lastName}</td>
+                                                <td>
+                                                    <span className={`badge ${
+                                                        shift.status === 'completed' ? 'success' :
+                                                        shift.status === 'in_progress' ? 'info' :
+                                                        shift.status === 'cancelled' ? 'error' : 'primary'
+                                                    }`}>
+                                                        {shift.status.replace('_', ' ')}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <button className="btn btn-icon btn-secondary">
+                                                        <Edit size={16} />
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    {showModal && (
+                        <div className="modal-overlay" onClick={() => setShowModal(false)}>
+                            <div className="modal" onClick={(e) => e.stopPropagation()}>
+                                <div className="modal-header">
+                                    <h3 className="modal-title">Create Shift</h3>
+                                    <button className="btn-close" onClick={() => setShowModal(false)}>
+                                        <X size={24} />
+                                    </button>
+                                </div>
+                                <div className="form-grid">
+                                    <div className="form-group">
+                                        <label className="form-label">Service User</label>
+                                        <select className="form-input form-select">
+                                            <option>Select service user</option>
+                                            {db.serviceUsers.map(su => (
+                                                <option key={su.id} value={su.id}>
+                                                    {su.firstName} {su.lastName}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    <div className="form-group">
+                                        <label className="form-label">Staff Member</label>
+                                        <select className="form-input form-select">
+                                            <option>Select staff member</option>
+                                            {db.users.filter(u => u.role === 'staff').map(staff => (
+                                                <option key={staff.id} value={staff.id}>
+                                                    {staff.firstName} {staff.lastName}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    <div className="form-group">
+                                        <label className="form-label">Date</label>
+                                        <input type="date" className="form-input" />
+                                    </div>
+                                    <div className="form-group">
+                                        <label className="form-label">Start Time</label>
+                                        <input type="time" className="form-input" />
+                                    </div>
+                                    <div className="form-group">
+                                        <label className="form-label">End Time</label>
+                                        <input type="time" className="form-input" />
+                                    </div>
+                                </div>
+                                <div className="form-group">
+                                    <label className="form-label">Notes</label>
+                                    <textarea className="form-input" rows="3" placeholder="Additional shift information"></textarea>
+                                </div>
+                                <div className="btn-group">
+                                    <button className="btn btn-secondary" onClick={() => setShowModal(false)}>Cancel</button>
+                                    <button className="btn btn-primary">Create Shift</button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        // Reports Component
+        function Reports() {
+            return (
+                <div className="content-area">
+                    <div className="card">
+                        <div className="card-header">
+                            <h3 className="card-title">Reports & Compliance</h3>
+                            <button className="btn btn-primary">
+                                <Download size={18} />
+                                Export All
+                            </button>
+                        </div>
+                        <div className="alert info">
+                            <AlertCircle size={20} />
+                            <div>
+                                <strong>CQC Inspection Ready</strong>
+                                <p style={{margin: '0.25rem 0 0'}}>All records include automatic audit trails and timestamps for regulatory compliance.</p>
+                            </div>
+                        </div>
+                        <div className="empty-state">
+                            <FileText size={64} />
+                            <h3>Report Templates</h3>
+                            <p>Structured reporting templates will appear here</p>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // Main App Layout
+        function AppLayout() {
+            const { user, logout } = useAuth();
+            const [currentPage, setCurrentPage] = useState('dashboard');
+            const [sidebarOpen, setSidebarOpen] = useState(false);
+
+            const navigation = {
+                admin: [
+                    { id: 'dashboard', label: 'Dashboard', icon: Activity },
+                    { id: 'staff', label: 'Staff Management', icon: Users },
+                    { id: 'users', label: 'Service Users', icon: User },
+                    { id: 'rota', label: 'Rota Schedule', icon: Calendar },
+                    { id: 'reports', label: 'Reports', icon: FileText },
+                ],
+                manager: [
+                    { id: 'dashboard', label: 'Dashboard', icon: Activity },
+                    { id: 'staff', label: 'Staff Management', icon: Users },
+                    { id: 'users', label: 'Service Users', icon: User },
+                    { id: 'rota', label: 'Rota Schedule', icon: Calendar },
+                    { id: 'reports', label: 'Reports', icon: FileText },
+                ],
+                staff: [
+                    { id: 'dashboard', label: 'Dashboard', icon: Activity },
+                    { id: 'users', label: 'My Service Users', icon: User },
+                    { id: 'rota', label: 'My Rota', icon: Calendar },
+                    { id: 'reports', label: 'Care Logs', icon: FileText },
+                ],
+            };
+
+            const currentNav = navigation[user.role] || navigation.admin;
+
+            const renderPage = () => {
+                switch(currentPage) {
+                    case 'staff': return <StaffManagement />;
+                    case 'users': return <ServiceUsers />;
+                    case 'rota': return <RotaManagement />;
+                    case 'reports': return <Reports />;
+                    default: return <Dashboard />;
+                }
+            };
+
+            const getPageTitle = () => {
+                const page = currentNav.find(n => n.id === currentPage);
+                return page ? page.label : 'Dashboard';
+            };
+
+            return (
+                <div className="dashboard-layout">
+                    <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
+                        <div className="sidebar-brand">
+                            <h2>CareSync Pro</h2>
+                            <p>CQC Compliant</p>
+                        </div>
+                        <ul className="nav-menu">
+                            {currentNav.map(item => (
+                                <li key={item.id} className="nav-item">
+                                    <a
+                                        href="#"
+                                        className={`nav-link ${currentPage === item.id ? 'active' : ''}`}
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            setCurrentPage(item.id);
+                                            setSidebarOpen(false);
+                                        }}
+                                    >
+                                        <item.icon size={20} />
+                                        {item.label}
+                                    </a>
+                                </li>
+                            ))}
+                        </ul>
+                    </aside>
+
+                    <main className="main-content">
+                        <header className="topbar">
+                            <div className="topbar-left">
+                                <button 
+                                    className="btn btn-icon btn-secondary"
+                                    style={{marginRight: '1rem', display: 'none'}}
+                                    onClick={() => setSidebarOpen(!sidebarOpen)}
+                                >
+                                    <Menu size={20} />
+                                </button>
+                                <div>
+                                    <h1>{getPageTitle()}</h1>
+                                    <p>Welcome back, {user.firstName}</p>
+                                </div>
+                            </div>
+                            <div className="topbar-right">
+                                <button className="btn btn-icon btn-secondary">
+                                    <Bell size={20} />
+                                </button>
+                                <div className="user-profile" onClick={logout} style={{cursor: 'pointer'}}>
+                                    <div className="user-avatar">
+                                        {user.firstName[0]}{user.lastName[0]}
+                                    </div>
+                                    <div className="user-info">
+                                        <h4>{user.firstName} {user.lastName}</h4>
+                                        <p>{user.role}</p>
+                                    </div>
+                                    <LogOut size={18} />
+                                </div>
+                            </div>
+                        </header>
+
+                        {renderPage()}
+                    </main>
+                </div>
+            );
+        }
+
+        // Main App Component
+        function App() {
+            const { user, loading } = useAuth();
+
+            if (loading) {
+                return (
+                    <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        minHeight: '100vh',
+                        background: 'var(--bg-primary)'
+                    }}>
+                        <div style={{textAlign: 'center'}}>
+                            <Activity size={48} style={{color: 'var(--primary)', marginBottom: '1rem'}} />
+                            <h2 style={{fontFamily: 'Crimson Pro', color: 'var(--primary)'}}>Loading CareSync Pro...</h2>
+                        </div>
+                    </div>
+                );
+            }
+
+            return user ? <AppLayout /> : <LoginPage />;
+        }
+
+        // Render App
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(
+            <AuthProvider>
+                <App />
+            </AuthProvider>
+        );
+    </script>
+</body>
+</html>
